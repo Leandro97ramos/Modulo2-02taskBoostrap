@@ -37,6 +37,9 @@ body{
 
 }
 
+.container-main{
+    width: 99%;
+}
 .container-cards{
     display: flex;
     justify-content: center;
