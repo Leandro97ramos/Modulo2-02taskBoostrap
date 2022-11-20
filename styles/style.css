@@ -33,8 +33,10 @@ body{
 
 .content-search{
     display: flex;
-    justify-content: space-evenly;
-
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 .container-main{

@@ -160,12 +160,30 @@ const data = {
 
 const pastEvents = [];
 const upcomingEvents = [];
-
 data.eventos.map(event => {
-    Date.parse(event.date) < Date.parse(data.fechaActual) ? pastEvents.push(event) : upcomingEvents.push(event)
+    if (Date.parse(event.date) < Date.parse(data.fechaActual)) {
+        pastEvents.push(event)
+
+    }else{
+        
+        upcomingEvents.push(event)
+
+    }
 })
 
-const card = (event) => {
+const elemCheck = (event) => {
+   return `
+            <div class="form-check col-md-2">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck" >
+                <label class="form-check-label" for="flexCheckChecked">
+                  ${event.category}
+                </label>
+            </div>
+            
+    `
+}
+
+const elemcard = (event) => {
     return `
     
    
@@ -188,20 +206,69 @@ const card = (event) => {
             `
 }
 
-
-const insertCard = (id,data) => {
-    const cardContainer = document.querySelector(id);
-
+const insertElement = (data) => {
+    let cardContainer = document.querySelector('.container-cards');
+    let checkContainer = document.querySelector('.content-search');
+    let checks = []
     data.map(event => {
-        cardContainer.insertAdjacentHTML("beforeend", card(event))
+        event.category;
+        if (!checks.includes(event.category)) {
+            checks.push(event.category);
+            checkContainer.insertAdjacentHTML("afterbegin",elemCheck(event) );
+        }
+        cardContainer.insertAdjacentHTML("beforeend", elemcard(event));
     })
+    eventFiltro();
 }
 
-var URLactual = window.location.pathname.split('/').pop();
-console.log(URLactual)
+
+
+//creo la conexion con text input
+const input = document.getElementsByClassName("form-control ")[0];
+
+//lista de elementos
+const listItem = document.getElementsByClassName('card  col-md-6') ;
+
+
+console.log(listItem);
+
+
+const eventFiltro = (event) => {
+    input.addEventListener('keyup', (event) => {
+        Array.from(listItem).forEach((item) => {
+            const itemTitle = item.querySelector('h5').textContent;
+            itemTitle
+                .toLocaleLowerCase()
+                .includes(event.target.value.toLocaleLowerCase())
+                ? item.style.display = 'block' : item.style.display = 'none' 
+        })
+    });
+}
+
+
+eventFiltro();
+const URLactual = window.location.pathname.split('/').pop();
 
 switch (URLactual) {
-    case 'index.html': insertCard('.container-cards',data.eventos); break;
-    case 'upcomingEvents.html': insertCard('#cards_container_upcoming',upcomingEvents); break;
-    case 'pastEvents.html': insertCard('#cards_container_past',pastEvents); break;
+    
+    case 'index.html':  insertElement(data.eventos);
+                       
+        break;
+    
+    case 'upComing.html': insertElement(upcomingEvents);
+
+        break;
+    
+    case 'pastEvents.html': insertElement(pastEvents);  
+
+        break;
+
+    default: 
+        
+            insertElement(data.eventos);
+    
+    
+    
+    break;
+
 }
