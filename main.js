@@ -174,7 +174,7 @@ data.eventos.map(event => {
 const elemCheck = (event) => {
    return `
             <div class="form-check col-md-2">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheck" >
+                <input class="form-check-input" type="checkbox" value="${event.category}" id="flexCheck" >
                 <label class="form-check-label" for="flexCheckChecked">
                   ${event.category}
                 </label>
@@ -183,21 +183,22 @@ const elemCheck = (event) => {
     `
 }
 
-const elemcard = (event) => {
+const elemcard = (event, href) => {
     return `
     
    
 
 
-            <div class="card  col-md-6" style="width: 15rem;">
+            <div class="card  col-md-6   " id="crd" style="width: 15rem;">
             <img src="${event.image}" class="card-img-top" alt="...">
             <div class="card-body">
-                <h5 class="card-title">${event.name}</h5>
+                <h5 class="card-title ">${event.name}</h5>
                 <p class="card-text">${event.description}</p>
+                <label class="form-label hidden" for="flexCheckChecked">${event.category}</label>
             </div>
             <div class="card_price_detail">
                 <p class="card_price">Price: $ ${event.price}</p>
-                <a href="./pages/details.html" class="card_button">View Detail</a>
+                <a href=${href}  class="card_button">View Detail</a>
             </div>
     
       
@@ -206,66 +207,203 @@ const elemcard = (event) => {
             `
 }
 
-const insertElement = (data) => {
+const noneResult = () => {
+    return `
+    <div class="col-md-12 noneRes hidden">
+        <h1 class="text-center">No results found</h1>
+
+    </div>
+    `
+}
+
+const insertElement = (data, href) => {
     let cardContainer = document.querySelector('.container-cards');
     let checkContainer = document.querySelector('.content-search');
     let checks = []
+    
     data.map(event => {
         event.category;
         if (!checks.includes(event.category)) {
             checks.push(event.category);
             checkContainer.insertAdjacentHTML("afterbegin",elemCheck(event) );
         }
-        cardContainer.insertAdjacentHTML("beforeend", elemcard(event));
+
+        cardContainer.insertAdjacentHTML("beforeend", elemcard(event,href));
+        
     })
-    eventFiltro();
+    cardContainer.insertAdjacentHTML("beforeend", noneResult())
+    eventFiltroCheck();
+
 }
 
 
 
-//creo la conexion con text input
-const input = document.getElementsByClassName("form-control ")[0];
 
 //lista de elementos
 const listItem = document.getElementsByClassName('card  col-md-6') ;
 
 
-console.log(listItem);
-
-
 const eventFiltro = (event) => {
-    input.addEventListener('keyup', (event) => {
+    //creo la conexion con text input
+    const inputText = document.getElementsByClassName("form-control ")[0];
+    inputText.addEventListener('keyup', (event) => {
+        let cont = 0;
+        let arrElementos = Array.from(listItem).length;
         Array.from(listItem).forEach((item) => {
             const itemTitle = item.querySelector('h5').textContent;
             itemTitle
                 .toLocaleLowerCase()
                 .includes(event.target.value.toLocaleLowerCase())
-                ? item.style.display = 'block' : item.style.display = 'none' 
-        })
+                ? item.style.display = 'block' : item.style.display = 'none';
+         
+
+                item.style.display=='block'  ? cont : cont++;
+                
+              //  cont++;
+            })
+            //mostrar los block
+            //console.log(cont);
+           console.log(typeof(event.target.value));
+
+           if (cont == arrElementos && event.target.value != '') {
+               //document.querySelector('.hidden').style.display = 'block';
+               document.querySelector('.noneRes').classList.remove('hidden');
+            } else{
+                document.querySelector('.noneRes').classList.add('hidden');
+           }
+
     });
 }
 
 
 eventFiltro();
+
+
+
+//const de evento de filtrado
+const eventFiltroCheck = (event) => {
+
+    //obtengo todos los checkbox 
+    let checks = document.querySelectorAll('.form-check-input');
+    //nombre de los checks seleccionados
+    let checksChecked = [];
+
+
+    //recorro los checkbox
+    checks.forEach((check) => {
+        //agrego evento change
+        check.addEventListener('change', (event) => {
+            //obtengo el valor del check
+            let valCheck;
+            //obtengo el valor del itemCheck
+            //gurado los checks seleccionados
+            let item = [];
+
+            if (checksChecked.includes(event.target.value)) {
+                //elimino elemento
+                checksChecked.splice(checksChecked.indexOf(event.target.value), 1);
+            }else{
+                //agrego elemento
+                checksChecked.push(event.target.value);
+            }
+            //muestro todos los valores con los elementos
+
+            valCheck = event.target.value;
+
+            console.log(checksChecked);
+
+            //recorro los elementos
+            Array.from(listItem).forEach((item) => {
+                //obtengo el valor del itemCheck
+                let itemCheck = item.querySelector('.form-label').textContent;
+                //comparo los valores
+                if (checksChecked.includes(itemCheck)) {
+                    item.style.display = 'block';
+                }else{
+                    item.style.display = 'none';
+                }
+            })
+            
+            if (event.target.checked == false) {
+                Array.from(listItem).forEach((item) => {
+                    item.style.display = 'block';
+                })
+            }
+        })
+        
+        if (checksChecked.length == 0) {
+            Array.from(listItem).forEach((item) => {
+                item.style.display = 'block';
+            })
+        }
+            
+        
+     
+    })
+    console.log(checksChecked);
+    //recorro los items
+    Array.from(listItem).forEach((item) => {
+        //obtengo el valor del item
+        valItem = item.querySelector('label').textContent;
+        //comparo los valores
+        console.log(checksChecked.includes(valItem));
+        if (checksChecked.includes(valItem)) {
+            console.log("entra");
+            item.style.display = 'none';
+        }
+    })
+
+}
+eventFiltroCheck();
+/*
+if(valItem.toLocaleLowerCase().includes(valCheck.toLocaleLowerCase())){
+                    item.style.display = 'block'
+                }else{
+                    item.style.display = 'none'
+                }
+
+*/ 
+
+
+
+const viewDetail = (event) => {
+    Array.from(listItem).forEach((item) => {
+        item.querySelector('.card_button').addEventListener('click', () => {
+           alert(event);
+        })
+
+    })
+    //obtengo el card
+//    localStorage.setItem('event', JSON.stringify(event));
+}
+
+viewDetail();
+
+
+
+
+
+
+
 const URLactual = window.location.pathname.split('/').pop();
 
 switch (URLactual) {
     
-    case 'index.html':  insertElement(data.eventos);
+    case 'index.html':  insertElement(data.eventos, "./pages/details.html");
                        
         break;
     
-    case 'upComing.html': insertElement(upcomingEvents);
+    case 'upComing.html': insertElement(upcomingEvents, "../pages/details.html");
 
         break;
     
-    case 'pastEvents.html': insertElement(pastEvents);  
+    case 'pastEvents.html': insertElement(pastEvents,"../pages/details.html");  
 
         break;
 
     default: 
         
-            insertElement(data.eventos);
+            insertElement(data.eventos,"./pages/details.html");
     
     
     
