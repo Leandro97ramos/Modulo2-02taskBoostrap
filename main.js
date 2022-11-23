@@ -233,6 +233,8 @@ const insertElement = (data, href) => {
     })
     cardContainer.insertAdjacentHTML("beforeend", noneResult())
     eventFiltroCheck();
+    viewDetail();
+
 
 }
 
@@ -317,30 +319,35 @@ const eventFiltroCheck = (event) => {
                 //obtengo el valor del itemCheck
                 let itemCheck = item.querySelector('.form-label').textContent;
                 //comparo los valores
-                if (checksChecked.includes(itemCheck)) {
-                    item.style.display = 'block';
-                }else{
+                if (!checksChecked.includes(itemCheck)) {
                     item.style.display = 'none';
+                }else{
+                    item.style.display = 'block';
+                }
+            })
+
+            Array.from(listItem).forEach((item) => {
+                //obtengo el valor del itemCheck
+                let itemCheck = item.querySelector('.form-label').textContent;
+                //comparo los valores
+                if (!checksChecked.includes(itemCheck)) {
+                    item.style.display = 'none';
+                }else{
+                    item.style.display = 'block';
                 }
             })
             
-            if (event.target.checked == false) {
+           
+            if (checksChecked.length == 0) {
                 Array.from(listItem).forEach((item) => {
                     item.style.display = 'block';
                 })
             }
         })
-        
-        if (checksChecked.length == 0) {
-            Array.from(listItem).forEach((item) => {
-                item.style.display = 'block';
-            })
-        }
             
         
      
     })
-    console.log(checksChecked);
     //recorro los items
     Array.from(listItem).forEach((item) => {
         //obtengo el valor del item
@@ -348,28 +355,30 @@ const eventFiltroCheck = (event) => {
         //comparo los valores
         console.log(checksChecked.includes(valItem));
         if (checksChecked.includes(valItem)) {
-            console.log("entra");
             item.style.display = 'none';
         }
     })
 
 }
 eventFiltroCheck();
-/*
-if(valItem.toLocaleLowerCase().includes(valCheck.toLocaleLowerCase())){
-                    item.style.display = 'block'
-                }else{
-                    item.style.display = 'none'
-                }
 
-*/ 
+
+
 
 
 
 const viewDetail = (event) => {
     Array.from(listItem).forEach((item) => {
         item.querySelector('.card_button').addEventListener('click', () => {
-           alert(event);
+            //obtengo el objeto
+            data.eventos.map((event) => {
+                console.log(event.category);
+            })
+
+
+
+            
+            
         })
 
     })
